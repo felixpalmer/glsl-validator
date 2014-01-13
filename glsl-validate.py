@@ -5,6 +5,16 @@ import re
 import shutil
 import subprocess
 
+DIR=os.path.dirname(os.path.realpath(__file__))
+
+# Load in prefix files, see the prefix directory for examples
+VERTEX_PREFIX = ""
+FRAGMENT_PREFIX = ""
+with open(os.path.join(DIR, "prefix/prefix.vert"), 'r') as f:
+    VERTEX_PREFIX = f.read()
+with open(os.path.join(DIR, "prefix/prefix.frag"), 'r') as f:
+    FRAGMENT_PREFIX = f.read()
+
 def standalone():
     parser = argparse.ArgumentParser(description='Validate three.js shaders')
     parser.add_argument('files', metavar='FILE', type=str, nargs='+',
