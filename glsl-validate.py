@@ -23,9 +23,6 @@ else:
 def color(s, color):
     return "\033[1;%dm%s\033[1;m" % (color, s)
 
-def red(s):
-    return color(s, 31)
-
 def grey(s):
     return color(s, 30)
 
@@ -59,14 +56,14 @@ def validate_shader(shader_file):
 
         # Write out formatted errors
         header = "ERROR in %s:" % shader_file
-        error = red(header + "\n")
-        error += grey(len(header) * "=" + "\n")
+        error = ""
         for e in raw_errors:
             # Error format is: 'ERROR: 0:<line number>: <error message>
             details = re.match("ERROR: 0:(\d+): (.*)", e)
             line_number = int(details.group(1)) - shader_prefix_lines
             error_message = details.group(2)
-            error += "%d: %s\n" % (line_number, error_message)
+            error_format = grey("%s:%d ") + "%s\n"
+            error += error_format % (shader_file, line_number, error_message)
         print error
         exit(1)
 
