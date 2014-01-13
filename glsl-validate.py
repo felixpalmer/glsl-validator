@@ -1,11 +1,23 @@
 #!/usr/bin/python
 import argparse
 import os
+import platform
 import re
 import shutil
 import subprocess
 
 DIR=os.path.dirname(os.path.realpath(__file__))
+
+# Select the correct essl_to_glsl executable for this platform
+if platform.system() == 'Darwin':
+    ESSL_TO_GLSL = os.path.join(DIR, "angle/essl_to_glsl_osx")
+elif platform.system() == 'Linux':
+    ESSL_TO_GLSL = os.path.join(DIR, "angle/essl_to_glsl_linux")
+elif platform.system() == 'Windows':
+    ESSL_TO_GLSL = os.path.join(DIR, "angle/essl_to_glsl_win.exe")
+else:
+    print "Unsupported platform"
+    exit(1)
 
 # Color terminal output
 def color(s, color):
@@ -29,7 +41,7 @@ def validate_shader(shader_file):
         f.write(shader)
 
     # Run essl_to_glsl over the shader, reporting any errors
-    p = subprocess.Popen([os.path.join(DIR, "angle/essl_to_glsl_osx"),
+    p = subprocess.Popen([ESSL_TO_GLSL,
                           "-s=w",
                           "-x=d",
                           os.path.join(DIR, tmp_file_name)],
