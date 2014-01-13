@@ -8,7 +8,7 @@ Prefix files
 
 In order to keep the ANGLE compiler happy, we prepend prefix files to the GLSL files being checked, which contain the code that a library will pass in.
 
-The prefix files that the validator will use are `prefix/prefix.frag` and `prefix/prefix.vert` for fragment and vertex shaders, respectively. Example prefix files for various libraries can also be found in the prefix directory, e.g. prefix.threejs.vert.
+The prefix files that the validator will use are `prefix/prefix.frag` and `prefix/prefix.vert` for fragment and vertex shaders, respectively. Example prefix files for various libraries can also be found in the prefix directory, e.g. `prefix.threejs.vert`.
 
 Validation engine
 =================
