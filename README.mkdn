@@ -1,12 +1,14 @@
-THREE.js Validator
+GLSL Validator
 ==================
 
-THREE.js validator is a tool for validating your GLSL shaders, with support for the standard parameters that THREE.js passes into your shader.
+The GLSL validator is a tool for validating your GLSL shaders, with support for adding prefixes to your shaders, leading to compatibility with libraries such as THREE.js, which automatically pass in variables into your shaders.
 
 Prefix files
 ============
 
-In order to keep the ANGLE compiler happy, we prepend prefix files to the GLSL files being checked, which contain the variables that THREE.js will pass in. These files are `prefix.vert` and `prefix.frag`, for vertex and fragment shaders, respectively.
+In order to keep the ANGLE compiler happy, we prepend prefix files to the GLSL files being checked, which contain the code that a library will pass in.
+
+The prefix files that the validator will use are `prefix/prefix.frag` and `prefix/prefix.vert` for fragment and vertex shaders, respectively. Example prefix files for various libraries can also be found in the prefix directory, e.g. prefix.threejs.vert.
 
 Validation engine
 =================
