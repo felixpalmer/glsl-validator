@@ -34,10 +34,12 @@ def validate_shader(shader_file):
     tmp_file_name = "tmp%s" % extension
 
     # Load in the prefix for the shader first and then append the actual shader
-    shutil.copyfile(os.path.join(DIR, "prefix/prefix%s" % extension), os.path.join(DIR, tmp_file_name))
+    with open(os.path.join(DIR, "prefix/prefix%s" % extension), 'r') as f:
+        shader_prefix = f.read()
     with open(shader_file, 'r') as f:
         shader = f.read()
-    with open(os.path.join(DIR, tmp_file_name), 'a') as f:
+    with open(os.path.join(DIR, tmp_file_name), 'w') as f:
+        f.write(shader_prefix)
         f.write(shader)
 
     # Run essl_to_glsl over the shader, reporting any errors
@@ -51,10 +53,20 @@ def validate_shader(shader_file):
     os.remove(os.path.join(DIR, tmp_file_name))
 
     if ret_code != 0:
+        # Get the number of lines in the prefix file, so we can report line numbers correctly
+        shader_prefix_lines = shader_prefix.count("\n")
+        raw_errors = p.stdout.readlines()[1:-4]
+
+        # Write out formatted errors
         header = "ERROR in %s:" % shader_file
         error = red(header + "\n")
         error += grey(len(header) * "=" + "\n")
-        error += "".join(p.stdout.readlines()[1:-4])
+        for e in raw_errors:
+            # Error format is: 'ERROR: 0:<line number>: <error message>
+            details = re.match("ERROR: 0:(\d+): (.*)", e)
+            line_number = int(details.group(1)) - shader_prefix_lines
+            error_message = details.group(2)
+            error += "%d: %s\n" % (line_number, error_message)
         print error
         exit(1)
 
