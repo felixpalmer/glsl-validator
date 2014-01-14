@@ -8,6 +8,13 @@ Usage
 
 Add the directory containing the `glsl-validate.py` command to your path, then invoke using `glsl-validate.py FILE [FILE ...]`
 
+Example output
+==============
+
+If there any errors in the passed in shader files, they will be displayed along with the line they occured on:
+
+![](https://github.com/felixpalmer/glsl-validator/raw/master/screenshot.png)  
+
 Prefix files
 ============
 
