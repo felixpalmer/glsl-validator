@@ -3,6 +3,8 @@ GLSL Validator
 
 The GLSL validator is a tool for validating your GLSL shaders, with support for adding prefixes to your shaders, leading to compatibility with libraries such as THREE.js, which automatically pass in variables into your shaders.
 
+For more details, see [post here](http://www.pheelicks.com/2014/01/automatically-validating-glsl-files/)
+
 Usage
 =====
 
