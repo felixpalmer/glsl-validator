@@ -26,6 +26,19 @@ def color(s, color):
 def grey(s):
     return color(s, 30)
 
+def load_shader(shader_file):
+    output = ""
+    with open(shader_file, 'r') as f:
+        for line in f:
+            include_match = re.match("#include (.*)", line)
+            if include_match:
+                include_file = include_match.group(1)
+                fullpath = os.path.join(os.path.dirname(shader_file), include_file)
+                output += load_shader(fullpath)
+            else:
+                output += line
+    return output
+
 def validate_shader(shader_file):
     extension = os.path.splitext(shader_file)[1]
     tmp_file_name = "tmp%s" % extension
@@ -33,8 +46,7 @@ def validate_shader(shader_file):
     # Load in the prefix for the shader first and then append the actual shader
     with open(os.path.join(DIR, "prefix/prefix%s" % extension), 'r') as f:
         shader_prefix = f.read()
-    with open(shader_file, 'r') as f:
-        shader = f.read()
+    shader = load_shader(shader_file)
     with open(os.path.join(DIR, tmp_file_name), 'w') as f:
         f.write(shader_prefix)
         f.write(shader)
