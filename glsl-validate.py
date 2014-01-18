@@ -28,27 +28,35 @@ def grey(s):
 
 def load_shader(shader_file):
     output = ""
+    # Keep track of line numbers, #including will result in some corresponding to other files
+    line_labels = []
     with open(shader_file, 'r') as f:
+        line_num = 1
         for line in f:
             include_match = re.match("#include (.*)", line)
             if include_match:
                 include_file = include_match.group(1)
                 fullpath = os.path.join(os.path.dirname(shader_file), include_file)
-                output += load_shader(fullpath)
+                (included_shader, included_line_labels) = load_shader(fullpath)
+                output += included_shader
+                line_labels += included_line_labels
             else:
                 output += line
-    return output
+                line_labels.append("%s:%d" % (shader_file, line_num))
+            line_num += 1
+    return (output, line_labels)
 
 def validate_shader(shader_file):
     extension = os.path.splitext(shader_file)[1]
     tmp_file_name = "tmp%s" % extension
 
     # Load in the prefix for the shader first and then append the actual shader
-    with open(os.path.join(DIR, "prefix/prefix%s" % extension), 'r') as f:
-        shader_prefix = f.read()
-    shader = load_shader(shader_file)
+    prefix_shader_file = os.path.join(DIR, "prefix/prefix%s" % extension)
+    (prefix_shader, prefix_line_labels) = load_shader(prefix_shader_file)
+    (shader, line_labels) = load_shader(shader_file)
+    shader = prefix_shader + shader
+    line_labels = prefix_line_labels + line_labels
     with open(os.path.join(DIR, tmp_file_name), 'w') as f:
-        f.write(shader_prefix)
         f.write(shader)
 
     # Run essl_to_glsl over the shader, reporting any errors
@@ -62,20 +70,18 @@ def validate_shader(shader_file):
     os.remove(os.path.join(DIR, tmp_file_name))
 
     if ret_code != 0:
-        # Get the number of lines in the prefix file, so we can report line numbers correctly
-        shader_prefix_lines = shader_prefix.count("\n")
         raw_errors = p.stdout.readlines()[1:-4]
 
         # Write out formatted errors
-        header = "ERROR in %s:" % shader_file
         error = ""
         for e in raw_errors:
             # Error format is: 'ERROR: 0:<line number>: <error message>
             details = re.match("ERROR: 0:(\d+): (.*)", e)
-            line_number = int(details.group(1)) - shader_prefix_lines
+            line_number = int(details.group(1))
+            line_label = line_labels[line_number-1]
             error_message = details.group(2)
-            error_format = grey("%s:%d ") + "%s\n"
-            error += error_format % (shader_file, line_number, error_message)
+            error_format = grey("%s ") + "%s\n"
+            error += error_format % (line_label, error_message)
         print error
         exit(1)
 
