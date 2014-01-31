@@ -27,4 +27,4 @@ The prefix files that the validator will use are `prefix/prefix.frag` and `prefi
 Validation engine
 =================
 
-To validate the GLSL code, the ANGLE compiler is used. Binaries have been taken from the (Sublime Text GL Validator)[https://github.com/WebGLTools/GL-Shader-Validator]
+To validate the GLSL code, the ANGLE compiler is used. Binaries have been taken from the [Sublime Text GL Validator](https://github.com/WebGLTools/GL-Shader-Validator)
