@@ -19,9 +19,14 @@ else:
     print "Unsupported platform"
     exit(1)
 
+args = {}
+
 # Color terminal output
 def color(s, color):
-    return "\033[1;%dm%s\033[1;m" % (color, s)
+    if args.color:
+        return "\033[1;%dm%s\033[1;m" % (color, s)
+    else:
+        return s
 
 def grey(s):
     return color(s, 30)
@@ -89,6 +94,10 @@ def standalone():
     parser = argparse.ArgumentParser(description='Validate three.js shaders')
     parser.add_argument('files', metavar='FILE', type=str, nargs='+',
                                help='files to validate')
+    parser.add_argument('--color', dest='color', action='store_true', help='Color output')
+    parser.add_argument('--no-color', dest='color', action='store_false', help='Color output')
+    parser.set_defaults(color=True)
+    global args
     args = parser.parse_args()
     files = args.files
     bad_extensions = filter(lambda f: not re.match('^\.(vert|frag)$', os.path.splitext(f)[1]), files)
