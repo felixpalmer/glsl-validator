@@ -96,6 +96,7 @@ def standalone():
                                help='files to validate')
     parser.add_argument('--color', dest='color', action='store_true', help='Color output')
     parser.add_argument('--no-color', dest='color', action='store_false', help='Color output')
+    parser.add_argument('--write', dest='write', action='store_true', help='Write out to file.full.ext')
     parser.set_defaults(color=True)
     global args
     args = parser.parse_args()
@@ -106,6 +107,15 @@ def standalone():
         exit(1)
 
     map(validate_shader, files)
+
+    if args.write:
+        for f in files:
+            dest_name = f.split( '.' )
+            dest_name.insert( -1, 'full' )
+            dest_name = ".".join( dest_name )
+            with open( dest_name, 'w' ) as out:
+                (shader, lines) = load_shader( f ) 
+                out.write( shader )
 
 if __name__ == "__main__":
     standalone()
