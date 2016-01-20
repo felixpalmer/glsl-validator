@@ -55,12 +55,16 @@ def validate_shader(shader_file):
     extension = os.path.splitext(shader_file)[1]
     tmp_file_name = "tmp%s" % extension
 
-    # Load in the prefix for the shader first and then append the actual shader
-    prefix_shader_file = os.path.join(DIR, "prefix/prefix%s" % extension)
-    (prefix_shader, prefix_line_labels) = load_shader(prefix_shader_file)
+    # Load in actual shader
     (shader, line_labels) = load_shader(shader_file)
-    shader = prefix_shader + shader
-    line_labels = prefix_line_labels + line_labels
+
+    if not args.raw:
+        # Prepend the prefix shader unless we are in raw mode
+        prefix_shader_file = os.path.join(DIR, "prefix/prefix%s" % extension)
+        (prefix_shader, prefix_line_labels) = load_shader(prefix_shader_file)
+        shader = prefix_shader + shader
+        line_labels = prefix_line_labels + line_labels
+
     with open(os.path.join(DIR, tmp_file_name), 'w') as f:
         f.write(shader)
 
@@ -96,6 +100,7 @@ def standalone():
                                help='files to validate')
     parser.add_argument('--color', dest='color', action='store_true', help='Color output')
     parser.add_argument('--no-color', dest='color', action='store_false', help='Color output')
+    parser.add_argument('--raw', dest='raw', action='store_true', help='Do not prepend standard THREE.js prefix block (useful for RawShaderMaterial)')
     parser.add_argument('--write', dest='write', action='store_true', help='Write out to file.full.ext')
     parser.set_defaults(color=True)
     global args
