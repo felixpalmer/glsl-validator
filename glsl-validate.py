@@ -58,7 +58,8 @@ def validate_shader(shader_file):
     # Load in actual shader
     (shader, line_labels) = load_shader(shader_file)
 
-    if not args.raw:
+    # Check if marked as RawShader
+    if not args.raw and "RawShader" not in shader:
         # Prepend the prefix shader unless we are in raw mode
         prefix_shader_file = os.path.join(DIR, "prefix/prefix%s" % extension)
         (prefix_shader, prefix_line_labels) = load_shader(prefix_shader_file)
