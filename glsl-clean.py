@@ -32,6 +32,7 @@ args = None
 
 
 def validate_shader(shader_file):
+    print "Checking", shader_file
     extension = os.path.splitext(shader_file)[1]
 
     # Load in actual shader
@@ -51,7 +52,9 @@ def validate_shader(shader_file):
         if uniform_match:
             uniforms.append(uniform_match.group(1))
 
-    print uniforms
+    for uniform in uniforms:
+        if shader.count(uniform) is 1:
+            print "Unused uniform", uniform
 
 
 def standalone():
