@@ -53,9 +53,16 @@ def validate_shader(shader_file):
             uniforms.append(uniform_match.group(1))
 
     for uniform in uniforms:
+        if uniform in ['modelMatrix',
+                       'modelViewMatrix',
+                       'normalMatrix',
+                       'viewMatrix',
+                       'cameraPosition']:
+            continue
         if shader.count(uniform) is 1:
             print "Unused uniform", uniform
 
+    print ""
 
 def standalone():
     parser = argparse.ArgumentParser(description='Validate three.js shaders')
