@@ -32,7 +32,6 @@ args = None
 
 
 def validate_shader(shader_file):
-    print "Checking", shader_file
     extension = os.path.splitext(shader_file)[1]
 
     # Load in actual shader
@@ -52,6 +51,7 @@ def validate_shader(shader_file):
         if uniform_match:
             uniforms.append(uniform_match.group(1))
 
+    unused = []
     for uniform in uniforms:
         if uniform in ['modelMatrix',
                        'modelViewMatrix',
@@ -60,9 +60,13 @@ def validate_shader(shader_file):
                        'cameraPosition']:
             continue
         if shader.count(uniform) is 1:
-            print "Unused uniform", uniform
+            unused.append(uniform)
 
-    print ""
+    if len(unused) > 0:
+        print "Unused uniforms in", shader_file
+        for uniform in unused:
+            print uniform
+        print ""
 
 def standalone():
     parser = argparse.ArgumentParser(description='Validate three.js shaders')
