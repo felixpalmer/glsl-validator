@@ -80,9 +80,27 @@ def create_tmp_file(shader_file):
     return (tmp_file_name, line_labels)
 
 
-def validate_shader(shader_file):
+def shader_info(shader_file):
     (tmp_file_name, line_labels) = create_tmp_file(shader_file)
     # Run essl_to_glsl over the shader, reporting any errors
+    p = subprocess.Popen([CGC, "-oglsl", "-strict", "-glslWerror", "-profile",
+                          "gpu_vp", os.path.join(DIR, tmp_file_name)],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    ret_code = p.wait()
+    os.remove(os.path.join(DIR, tmp_file_name))
+
+    if ret_code == 0:
+        instructions = p.stdout.readlines()[-1][2:]
+        print shader_file, instructions
+    else:
+        print 'Error!'
+        for line in p.stdout.readlines():
+            print line
+
+
+def validate_shader(shader_file):
+    (tmp_file_name, line_labels) = create_tmp_file(shader_file)
     p = subprocess.Popen([ESSL_TO_GLSL, "-s=w", "-x=d",
                           os.path.join(DIR, tmp_file_name)],
                          stdout=subprocess.PIPE,
@@ -130,6 +148,7 @@ def standalone():
         exit(1)
 
     map(validate_shader, files)
+    map(shader_info, files)
 
     if args.write:
         for f in files:
