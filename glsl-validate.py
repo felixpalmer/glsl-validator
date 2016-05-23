@@ -97,8 +97,9 @@ def shader_info(shader_file):
 
     if ret_code == 0:
         lines = p.stdout.readlines()
-        instructions = "".join(lines[:-1])
-        print instructions
+        assembly = "".join(lines[:-1])
+        if args.assembly:
+            print assembly
         count = lines[-1][2:]
         print shader_file, count
     else:
@@ -145,6 +146,10 @@ def standalone():
                         help='Do not prepend standard THREE.js prefix block')
     parser.add_argument('--write', dest='write', action='store_true',
                         help='Write out to file.full.ext')
+    parser.add_argument('--compile', dest='compile', action='store_true',
+                        help='Print number of instructions according to cgc')
+    parser.add_argument('--assembly', dest='assembly', action='store_true',
+                        help='Print assembly instructions according to cgc')
     parser.set_defaults(color=True)
     global args
     args = parser.parse_args()
@@ -156,7 +161,8 @@ def standalone():
         exit(1)
 
     map(validate_shader, files)
-    map(shader_info, files)
+    if args.compile:
+        map(shader_info, files)
 
     if args.write:
         for f in files:
