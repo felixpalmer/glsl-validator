@@ -97,6 +97,11 @@ def shader_info(shader_file):
 
     if ret_code == 0:
         lines = p.stdout.readlines()
+        # Discard output at top, not useful
+        while len(lines) > 0:
+            if "#program main" in lines.pop(0):
+                break
+
         assembly = "".join(lines[:-1])
         if args.assembly:
             print assembly
