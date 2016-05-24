@@ -17,12 +17,20 @@ If there any errors in the passed in shader files, they will be displayed along 
 
 ![](https://github.com/felixpalmer/glsl-validator/raw/master/screenshot.png)  
 
+The tool can also be used to generate the shader assembly instructions to give
+you an idea of how compute intensive it is. Note this is just a guide, actual
+instruction will be driver dependent.
+
+![](https://github.com/felixpalmer/glsl-validator/raw/master/screenshot2.png)  
+
 Prefix files
 ============
 
 In order to keep the ANGLE compiler happy, we prepend prefix files to the GLSL files being checked, which contain the code that a library will pass in.
 
 The prefix files that the validator will use are `prefix/prefix.frag` and `prefix/prefix.vert` for fragment and vertex shaders, respectively. Example prefix files for various libraries can also be found in the prefix directory, e.g. `prefix.threejs.vert`.
+
+To not load the prefix files, use the `--raw` flag.
 
 Validation engine
 =================
@@ -32,5 +40,5 @@ To validate the GLSL code, the ANGLE compiler is used. Binaries have been taken 
 CGC compiler
 ============
 
-The `glsl-instructions.py` tool uses the Cg Toolkit to get an estimate (it is driver dependant) of the shader instructions a give shader will output. The required binary here is `cgc`, which (on OSX) can be obtained by downloading the Cg Toolkit from https://developer.nvidia.com/cg-toolkit-download and then using `Show package contents` to extract the `cgc` binary from `Cg-3.1.0013.app/Contents/Resources/Installer Items/NVIDIA_Cg.tgz` (the installer did not work for me).
+The tool uses the Cg Toolkit to get an estimate (it is driver dependant) of the shader instructions a given shader will output. The required binary for this to function is: `cgc`, which (on OSX) can be obtained by downloading the Cg Toolkit from https://developer.nvidia.com/cg-toolkit-download and then using `Show package contents` to extract the `cgc` binary from `Cg-3.1.0013.app/Contents/Resources/Installer Items/NVIDIA_Cg.tgz` (the installer did not work for me).
 l
